@@ -6,14 +6,14 @@ const Follow = require("../../models/follow");
 // Create
 const createFollow = async (req, res) => {
   try {
-    const uId = req.params.user_id;
+    const userId = req.params.user_id;
     const followed_id = req.body.idToFollow;
     const newFollow = new Follow({
-      follower_id: uId,
+      follower_id: userId,
       followed_id,
     });
-    const savedFollow = await newFollow.save();
-    res.status(200).json({"message":"Following the user successfully"});
+    await newFollow.save();
+    res.status(200).json({status:true,"message":"Successfully followed"});
   } catch (error) {
     console.error("Error creating follow:", error);
     throw error;
@@ -24,7 +24,7 @@ const createFollow = async (req, res) => {
 const getFollowers = async (req,res) => {
   try {
     const follows = await Follow.find({followed_id:req.params.user_id});
-    res.status(200).json(follows);
+    res.status(200).json({status:true, data:follows});
   } catch (error) {
     console.error("Error getting follows:", error);
     throw error;
@@ -34,17 +34,14 @@ const getFollowers = async (req,res) => {
 // Update
 const updateFollow = async (req, res) => {
   try {
-    const updatedFollow = await Follow.findOneAndUpdate({follower_id:req.params.user_id}, {
+    await Follow.findOneAndUpdate({follower_id:req.params.user_id}, {
         follower_id:req.params.user_id,
         followed_id:req.body.idToFollow
 
     }, {
       new: true,
     });
-    if (!updatedFollow) {
-      throw new Error("Follow not found");
-    }
-    res.status(200).json({message:"updated successfully"})
+    res.status(200).json({status:true,})
   } catch (error) {
     console.error("Error updating follow:", error);
     throw error;
@@ -54,11 +51,9 @@ const updateFollow = async (req, res) => {
 // Delete
 const deleteFollow = async (req, res) => {
   try {
-    const deletedFollow = await Follow.findOneAndDelete({follower_id:req.params.user_id});
-    if (!deletedFollow) {
-      throw new Error("Follow not found");
-    }
-    res.status(200).json({message:"deleted successfully"})
+    await Follow.findOneAndDelete({follower_id:req.params.user_id});
+    
+    res.status(200).json({status:true ,message:"deleted successfully"})
   } catch (error) {
     console.error("Error deleting follow:", error);
     throw error;

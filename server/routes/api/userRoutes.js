@@ -44,6 +44,7 @@ const getUserById = async (req, res) => {
 const login = async (req, res) => {
   try {
     const { username, password } = req.body;
+    console.log('username: ', username);
     const currUser = await UserSchema.find({ username });
     if (!(currUser.length > 0)) {
       res.status(404).json({ message: "User not found" });
